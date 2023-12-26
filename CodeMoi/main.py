@@ -98,6 +98,59 @@ class FrontEnd:
             # Chuyển đổi ảnh trở lại định dạng ban đầu để hiển thị trên giao diện
             self.filtered_image = cv2.cvtColor(image_with_text, cv2.COLOR_RGB2BGR)
             self.display_image(self.filtered_image)
+          ef crop_action(self):
+        self.rectangle_id = 0
+        # self.ratio = 0
+        self.crop_start_x = 0
+        self.crop_start_y = 0
+        self.crop_end_x = 0
+        self.crop_end_y = 0
+        self.canvas.bind("<ButtonPress>", self.start_crop)
+        self.canvas.bind("<B1-Motion>", self.crop)
+        self.canvas.bind("<ButtonRelease>", self.end_crop)
+
+    def start_crop(self, event):
+        self.crop_start_x = event.x
+        self.crop_start_y = event.y
+
+    def crop(self, event):
+        if self.rectangle_id:
+            self.canvas.delete(self.rectangle_id)
+
+        self.crop_end_x = event.x
+        self.crop_end_y = event.y
+
+        self.rectangle_id = self.canvas.create_rectangle(self.crop_start_x, self.crop_start_y,
+                                                         self.crop_end_x, self.crop_end_y, width=1)
+
+    def end_crop(self, event):
+        if self.crop_start_x <= self.crop_end_x and self.crop_start_y <= self.crop_end_y:
+            start_x = int(self.crop_start_x * self.ratio)
+            start_y = int(self.crop_start_y * self.ratio)
+            end_x = int(self.crop_end_x * self.ratio)
+            end_y = int(self.crop_end_y * self.ratio)
+        elif self.crop_start_x > self.crop_end_x and self.crop_start_y <= self.crop_end_y:
+            start_x = int(self.crop_end_x * self.ratio)
+            start_y = int(self.crop_start_y * self.ratio)
+            end_x = int(self.crop_start_x * self.ratio)
+            end_y = int(self.crop_end_y * self.ratio)
+        elif self.crop_start_x <= self.crop_end_x and self.crop_start_y > self.crop_end_y:
+            start_x = int(self.crop_start_x * self.ratio)
+            start_y = int(self.crop_end_y * self.ratio)
+            end_x = int(self.crop_end_x * self.ratio)
+            end_y = int(self.crop_start_y * self.ratio)
+        else:
+            start_x = int(self.crop_end_x * self.ratio)
+            start_y = int(self.crop_end_y * self.ratio)
+            end_x = int(self.crop_start_x * self.ratio)
+            end_y = int(self.crop_start_y * self.ratio)
+
+        x = slice(start_x, end_x, 1)
+        y = slice(start_y, end_y, 1)
+
+        self.filtered_image = self.edited_image[y, x]
+        self.display_image(self.filtered_image)
+      #
     def lam_moi_khung(self):
         try:
             self.side_frame.grid_forget()
