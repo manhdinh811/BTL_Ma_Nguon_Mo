@@ -98,7 +98,7 @@ class FrontEnd:
             # Chuyển đổi ảnh trở lại định dạng ban đầu để hiển thị trên giao diện
             self.filtered_image = cv2.cvtColor(image_with_text, cv2.COLOR_RGB2BGR)
             self.display_image(self.filtered_image)
-          ef crop_action(self):
+    def crop_action(self):
         self.rectangle_id = 0
         # self.ratio = 0
         self.crop_start_x = 0
@@ -202,6 +202,23 @@ class FrontEnd:
         self.gaussian_slider = Scale(
             self.side_frame, from_=0, to=256, orient=HORIZONTAL, command=self.gaussian_action)
         self.gaussian_slider.grid(row=3, column=2, padx=5, sticky='sw')
+    def draw_action(self):
+        self.color_code = ((255, 0, 0), '#ff0000')
+        self.refresh_side_frame()
+        self.canvas.bind("<ButtonPress>", self.start_draw)
+        self.canvas.bind("<B1-Motion>", self.draw)
+        self.draw_color_button = ttk.Button(
+            self.side_frame, text="Pick A Color", command=self.choose_color)
+        self.draw_color_button.grid(
+            row=0, column=2, padx=5, pady=5, sticky='sw')
+
+    def choose_color(self):
+        self.color_code = colorchooser.askcolor(title="Choose color")
+
+    def start_draw(self, event):
+        self.x = event.x
+        self.y = event.y
+        self.draw_ids = []
 
     def luu(self):
         if not self.image_loaded:
