@@ -4,6 +4,8 @@ from tkinter import messagebox
 import cv2
 from PIL import ImageTk, Image
 import numpy as np
+
+
 class FrontEnd:
     def __init__(self, master):
         self.master = master
@@ -20,7 +22,12 @@ class FrontEnd:
         ttk.Button(
             self.frame_menu, text="Chọn ảnh", command=self.anh).grid(
             row=0, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
-
+        ttk.Button(
+            self.frame_menu, text="Bộ lọc", command=self.bo_loc).grid(
+            row=1, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
+        ttk.Button(
+            self.frame_menu, text="Làm mờ", command=self.lam_mo).grid(
+            row=2, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
         ttk.Button(
             self.frame_menu, text="Thêm văn bản", command=self.van_ban).grid(
             row=3, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
@@ -104,6 +111,45 @@ class FrontEnd:
         self.side_frame.grid(row=0, column=4, rowspan=10)
         self.side_frame.config(relief=GROOVE, padding=(50, 15))
 
+    def bo_loc(self):
+        if not self.image_loaded:
+            messagebox.showwarning("Lỗi", "Vui lòng chọn ảnh")
+            return
+        self.lam_moi_khung()
+        ttk.Button(
+            self.side_frame, text="Đen và Trắng", command=self.den_trang).grid(
+            row=1, column=2, padx=5, pady=5, sticky='se')
+        ttk.Button(
+            self.side_frame, text="Bút chì", command=self.but_chi).grid(
+            row=2, column=2, padx=5, pady=5, sticky='se')
+
+        ttk.Button(
+            self.side_frame, text="3D", command=self.sau).grid(
+            row=3, column=2, padx=5, pady=5, sticky='se')
+        ttk.Button(
+            self.side_frame, text="Mở rộng", command=self.mo_rong).grid(
+            row=4, column=2, padx=5, pady=5, sticky='se')
+
+    def lam_mo(self):
+        if not self.image_loaded:
+            messagebox.showwarning("Lỗi", "Vui lòng chọn ảnh")
+            return
+        self.lam_moi_khung()
+        ttk.Label(
+            self.side_frame, text="Averaging Blur").grid(
+            row=0, column=2, padx=5, sticky='sw')
+
+        self.average_slider = Scale(
+            self.side_frame, from_=0, to=256, orient=HORIZONTAL, command=self.averaging_action)
+        self.average_slider.grid(row=1, column=2, padx=5, sticky='sw')
+
+        ttk.Label(
+            self.side_frame, text="Gaussian Blur").grid(row=2, column=2, padx=5, sticky='sw')
+
+        self.gaussian_slider = Scale(
+            self.side_frame, from_=0, to=256, orient=HORIZONTAL, command=self.gaussian_action)
+        self.gaussian_slider.grid(row=3, column=2, padx=5, sticky='sw')
+
     def luu(self):
         if not self.image_loaded:
             messagebox.showwarning("Lỗi", "Vui lòng chọn ảnh")
@@ -116,22 +162,62 @@ class FrontEnd:
         cv2.imwrite(filename, save_as_image)
         self.filename = filename
 
+    def den_trang(self):
+        self.filtered_image = cv2.cvtColor(
+            self.edited_image, cv2.COLOR_BGR2GRAY)
+        self.filtered_image = cv2.cvtColor(
+            self.filtered_image, cv2.COLOR_GRAY2BGR)
+        self.display_image(self.filtered_image)
+
+    def but_chi(self):
+        ret, self.filtered_image = cv2.pencilSketch(
+            self.edited_image, sigma_s=60, sigma_r=0.5, shade_factor=0.02)
+        self.display_image(self.filtered_image)
+
+    def sau(self):
+        kernel = np.array([[0, -1, -1],
+                           [1, 0, -1],
+                           [1, 1, 0]])
+        self.filtered_image = cv2.filter2D(self.original_image, -1, kernel)
+        self.display_image(self.filtered_image)
+
+    def mo_rong(self):
+        kernel = np.ones((5, 5), np.uint8)
+        self.filtered_image = cv2.dilate(
+            self.edited_image, kernel, iterations=1)
+        self.display_image(self.filtered_image)
+
+    def averaging_action(self, value):
+        value = int(value)
+        if value % 2 == 0:
+            value += 1
+        self.filtered_image = cv2.blur(self.edited_image, (value, value))
+        self.display_image(self.filtered_image)
+
+    def gaussian_action(self, value):
+        value = int(value)
+        if value % 2 == 0:
+            value += 1
+        self.filtered_image = cv2.GaussianBlur(
+            self.edited_image, (value, value), 0)
+        self.display_image(self.filtered_image)
+
     def ap_dung(self):
-            # Áp dụng bộ lọc hoặc thay đổi hình ảnh nếu có
-            self.edited_image = self.filtered_image
-            self.display_image(self.edited_image)
+        # Áp dụng bộ lọc hoặc thay đổi hình ảnh nếu có
+        self.edited_image = self.filtered_image
+        self.display_image(self.edited_image)
 
     def quay_lai(self):
-            self.display_image(self.edited_image)
+        self.display_image(self.edited_image)
 
     def anh_goc(self):
-            self.edited_image = self.original_image.copy()
-            self.display_image(self.original_image)
+        self.edited_image = self.original_image.copy()
+        self.display_image(self.original_image)
 
     def display_image(self, image=None):
         self.canvas.delete("all")
         if image is None:
-                image = self.edited_image.copy()
+            image = self.edited_image.copy()
         else:
             image = image
 
@@ -158,7 +244,7 @@ class FrontEnd:
 
         self.canvas.config(width=new_width, height=new_height)
         self.canvas.create_image(
-                new_width / 2, new_height / 2, image=self.new_image)
+            new_width / 2, new_height / 2, image=self.new_image)
 
 mainWindow = Tk()
 FrontEnd(mainWindow)

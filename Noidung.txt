@@ -1,0 +1,6 @@
+- Mã nguồn gốc cung cấp các chức năng cơ bản để chỉnh sửa ảnh như: chuyển đổi ảnh xám, làm mịn, tạo hiệu ứng bút chì, nhưng không có giao diện người dùng và chỉ tập trung vào việc xử lý ảnh qua mã lập trình.
+- Phát triển mã nguồn:
+Tạo giao diện người dùng: sử dụng Tkinter để tạo cửa sổ, các nút, thanh trượt và khu vực hiển thị ảnh.
+Tạo tính năng điều chỉnh thông số làm mịn ảnh: Thêm thanh trượt hoặc các cơ chế điều chỉnh để người dùng có thể điều chỉnh mức độ làm mịn ảnh theo các phương pháp khác nhau.
+Tạo cơ chế cho phép người dùng nhập văn bản: ví dụ, để thực hiện việc ghi chú hoặc thêm văn bản lên ảnh.
+Phát triển các bộ lọc ảnh: cho phép người dùng chọn và áp dụng các bộ lọc khác nhau lên ảnh, ví dụ như bộ lọc màu sắc, hiệu ứng đặc biệt, vv.
