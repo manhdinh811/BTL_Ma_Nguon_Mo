@@ -1,0 +1,21 @@
+Đoạn mã này tạo một ứng dụng GUI sử dụng thư viện Tkinter để chỉnh sửa hình ảnh. Đây là một số chức năng của ứng dụng:
+
+1. **Chọn ảnh:** Cho phép người dùng chọn một file hình ảnh từ hệ thống của họ để chỉnh sửa.
+
+2. **Bộ lọc:** Cung cấp một số lựa chọn bộ lọc để chỉnh sửa hình ảnh, bao gồm:
+   - Chuyển ảnh thành đen trắng.
+   - Hiệu ứng bút chì.
+   - Hiệu ứng 3D.
+   - Mở rộng.
+
+3. **Làm mờ:** Cho phép người dùng điều chỉnh độ mờ của hình ảnh bằng cách sử dụng các thanh trượt.
+
+4. **Thêm văn bản:** Cho phép người dùng nhập văn bản và thêm nó vào hình ảnh.
+
+5. **Lưu và Áp dụng:** Lưu các chỉnh sửa hoặc áp dụng các thay đổi vào hình ảnh.
+
+6. **Ảnh gốc và Quay lại:** Đưa hình ảnh về trạng thái ban đầu hoặc quay lại hình ảnh sau khi chỉnh sửa.
+
+7. **Hiển thị hình ảnh:** Sử dụng thư viện OpenCV và PIL để hiển thị hình ảnh trong một khung hình trên giao diện người dùng.
+
+Đoạn mã sử dụng các chức năng của thư viện OpenCV để xử lý và chỉnh sửa hình ảnh. Bằng cách tương tác với các phần của giao diện người dùng, người dùng có thể chọn và áp dụng các bộ lọc hoặc thay đổi khác vào hình ảnh một cách trực quan.
