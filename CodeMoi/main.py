@@ -1,18 +1,18 @@
-from tkinter import (ttk, Tk, PhotoImage, Canvas, filedialog, colorchooser, RIDGE,
-                     GROOVE, ROUND, Scale, HORIZONTAL)
+from tkinter import (ttk, Tk, Canvas, filedialog, RIDGE,
+                     GROOVE, Scale, HORIZONTAL)
 from tkinter import messagebox
 import cv2
 from PIL import ImageTk, Image
 import numpy as np
 
 
-class FrontEnd:
+class UngdungAnh:
     def __init__(self, master):
         self.master = master
         self.menu()
-        self.image_loaded = False  # Thêm biến cờ để kiểm tra ảnh đã được tải lên hay chưa
+        self.image_loaded = False
     def menu(self):
-        self.master.geometry('750x630+250+10')
+        self.master.geometry('830x450')
         self.master.title('Photo Editing')
 
         self.frame_menu = ttk.Frame(self.master)
@@ -35,7 +35,7 @@ class FrontEnd:
         ttk.Button(
             self.frame_menu, text="Lưu", command=self.luu).grid(
             row=4, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
-        self.canvas = Canvas(self.frame_menu, bg="gray", width=300, height=400)
+        self.canvas = Canvas(self.frame_menu, bg="gray", width=300, height=300)
         self.canvas.grid(row=0, column=3, rowspan=10)
         self.side_frame = ttk.Frame(self.frame_menu)
         self.side_frame.grid(row=0, column=4, rowspan=10)
@@ -58,15 +58,15 @@ class FrontEnd:
         self.filename = filedialog.askopenfilename()
         # Kiểm tra định dạng tệp tin
         if self.filename:
-            valid_image_formats = ('.png', '.jpg', '.jpeg', '.gif', '.bmp')
-            if self.filename.lower().endswith(valid_image_formats):
+            Dinh_dang_file = ('.png', '.jpg', '.jpeg', '.gif', '.bmp')
+            if self.filename.lower().endswith(Dinh_dang_file):
                 self.original_image = cv2.imread(self.filename)
                 self.edited_image = cv2.imread(self.filename)
                 self.filtered_image = cv2.imread(self.filename)
                 self.display_image(self.edited_image)
                 self.image_loaded = True
             else:
-                # Hiển thị thông báo nếu tệp tin không đúng định dạng
+
                 messagebox.showwarning("Lỗi", "Vui lòng chọn đúng định dạng")
 
     def van_ban(self):
@@ -98,59 +98,6 @@ class FrontEnd:
             # Chuyển đổi ảnh trở lại định dạng ban đầu để hiển thị trên giao diện
             self.filtered_image = cv2.cvtColor(image_with_text, cv2.COLOR_RGB2BGR)
             self.display_image(self.filtered_image)
-          ef crop_action(self):
-        self.rectangle_id = 0
-        # self.ratio = 0
-        self.crop_start_x = 0
-        self.crop_start_y = 0
-        self.crop_end_x = 0
-        self.crop_end_y = 0
-        self.canvas.bind("<ButtonPress>", self.start_crop)
-        self.canvas.bind("<B1-Motion>", self.crop)
-        self.canvas.bind("<ButtonRelease>", self.end_crop)
-
-    def start_crop(self, event):
-        self.crop_start_x = event.x
-        self.crop_start_y = event.y
-
-    def crop(self, event):
-        if self.rectangle_id:
-            self.canvas.delete(self.rectangle_id)
-
-        self.crop_end_x = event.x
-        self.crop_end_y = event.y
-
-        self.rectangle_id = self.canvas.create_rectangle(self.crop_start_x, self.crop_start_y,
-                                                         self.crop_end_x, self.crop_end_y, width=1)
-
-    def end_crop(self, event):
-        if self.crop_start_x <= self.crop_end_x and self.crop_start_y <= self.crop_end_y:
-            start_x = int(self.crop_start_x * self.ratio)
-            start_y = int(self.crop_start_y * self.ratio)
-            end_x = int(self.crop_end_x * self.ratio)
-            end_y = int(self.crop_end_y * self.ratio)
-        elif self.crop_start_x > self.crop_end_x and self.crop_start_y <= self.crop_end_y:
-            start_x = int(self.crop_end_x * self.ratio)
-            start_y = int(self.crop_start_y * self.ratio)
-            end_x = int(self.crop_start_x * self.ratio)
-            end_y = int(self.crop_end_y * self.ratio)
-        elif self.crop_start_x <= self.crop_end_x and self.crop_start_y > self.crop_end_y:
-            start_x = int(self.crop_start_x * self.ratio)
-            start_y = int(self.crop_end_y * self.ratio)
-            end_x = int(self.crop_end_x * self.ratio)
-            end_y = int(self.crop_start_y * self.ratio)
-        else:
-            start_x = int(self.crop_end_x * self.ratio)
-            start_y = int(self.crop_end_y * self.ratio)
-            end_x = int(self.crop_start_x * self.ratio)
-            end_y = int(self.crop_start_y * self.ratio)
-
-        x = slice(start_x, end_x, 1)
-        y = slice(start_y, end_y, 1)
-
-        self.filtered_image = self.edited_image[y, x]
-        self.display_image(self.filtered_image)
-      #
     def lam_moi_khung(self):
         try:
             self.side_frame.grid_forget()
@@ -287,9 +234,9 @@ class FrontEnd:
                 new_height = int(new_width * ratio)
             else:
                 new_height = 400
-                new_width = int(new_height * (width / height))
+                new_width = int(new_height * ratio)
 
-        self.ratio = height / new_height
+
         self.new_image = cv2.resize(image, (new_width, new_height))
 
         self.new_image = ImageTk.PhotoImage(
@@ -300,5 +247,5 @@ class FrontEnd:
             new_width / 2, new_height / 2, image=self.new_image)
 
 mainWindow = Tk()
-FrontEnd(mainWindow)
+UngdungAnh(mainWindow)
 mainWindow.mainloop()

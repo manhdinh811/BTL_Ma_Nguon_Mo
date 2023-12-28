@@ -11,11 +11,8 @@ invert = cv2.bitwise_not(grey_img)
 blur = cv2.GaussianBlur(invert, (21, 21), 0)
 invertedblur = cv2.bitwise_not(blur)
 
-sketch = cv2.divide(grey_img, invertedblur, scale=256.0)
-
 # Save our image
-cv2.imwrite("grey.png", grey_img)
-cv2.imwrite("sketched.png", sketch)
+cv2.imwrite("grey.png", invertedblur)
 
 
 cv2.waitKey(0)
