@@ -35,7 +35,7 @@ class UngdungAnh:
         ttk.Button(
             self.frame_menu, text="Lưu", command=self.luu).grid(
             row=4, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
-        self.canvas = Canvas(self.frame_menu, bg="gray", width=300, height=300)
+        self.canvas = Canvas(self.frame_menu, bg="gray", width=300, height=400)
         self.canvas.grid(row=0, column=3, rowspan=10)
         self.side_frame = ttk.Frame(self.frame_menu)
         self.side_frame.grid(row=0, column=4, rowspan=10)
@@ -58,15 +58,15 @@ class UngdungAnh:
         self.filename = filedialog.askopenfilename()
         # Kiểm tra định dạng tệp tin
         if self.filename:
-            Dinh_dang_file = ('.png', '.jpg', '.jpeg', '.gif', '.bmp')
-            if self.filename.lower().endswith(Dinh_dang_file):
+            valid_image_formats = ('.png', '.jpg', '.jpeg', '.gif', '.bmp')
+            if self.filename.lower().endswith(valid_image_formats):
                 self.original_image = cv2.imread(self.filename)
                 self.edited_image = cv2.imread(self.filename)
                 self.filtered_image = cv2.imread(self.filename)
                 self.display_image(self.edited_image)
                 self.image_loaded = True
             else:
-
+                # Hiển thị thông báo nếu tệp tin không đúng định dạng
                 messagebox.showwarning("Lỗi", "Vui lòng chọn đúng định dạng")
 
     def van_ban(self):
@@ -234,9 +234,9 @@ class UngdungAnh:
                 new_height = int(new_width * ratio)
             else:
                 new_height = 400
-                new_width = int(new_height * ratio)
+                new_width = int(new_height * (width / height))
 
-
+        self.ratio = height / new_height
         self.new_image = cv2.resize(image, (new_width, new_height))
 
         self.new_image = ImageTk.PhotoImage(
